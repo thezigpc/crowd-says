@@ -382,7 +382,8 @@ details.panel[open] > summary {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(1.2rem + var(--bargames-announcement-bottom, 0px));
+  /* Kit 0.10.2: above the on-screen keyboard while it's open (and the bottom announcement). */
+  bottom: calc(1.2rem + var(--bargames-announcement-bottom, 0px) + var(--bargames-keyboard, 0px));
   transform: translateX(-50%);
   background: var(--text);
   color: var(--bg);
@@ -393,11 +394,7 @@ details.panel[open] > summary {
   max-width: calc(100vw - 2rem);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
 }
-/* Touchscreens with the kit's on-screen keyboard: errors show above it, not under it. */
-.toast-top {
-  bottom: auto;
-  top: calc(1rem + var(--bargames-announcement-top, 0px));
-}
+
 
 .my-team {
   text-align: center;

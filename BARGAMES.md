@@ -4,11 +4,11 @@ Crowd Says is a game module for the Bar Games box that also runs standalone. Off
 `BG_*` environment) every SDK call is a no-op.
 
 - **Level:** 3 (controllable).
-- **SDK:** `@bargames/sdk` 0.15.0 (`vendor/bargames-sdk-0.15.0.tgz`).
-- **GameKit:** 0.10.0 (`vendor/bargames-gamekit-0.10.0.tgz`): RoomRegistry, HostSeats, wireBarGames,
+- **SDK:** `@bargames/sdk` 0.16.0 (`vendor/bargames-sdk-0.16.0.tgz`).
+- **GameKit:** 0.10.6 (`vendor/bargames-gamekit-0.10.6.tgz`): RoomRegistry, HostSeats, wireBarGames,
   JoinAddress, admin auth (`bodyLimit` for pack uploads), serveSpa, OnScreenKeyboard.
 - **Port:** 3013. **Routing:** `routing.basePath: true` (served under `/crowdsays/` on a box).
-- **Image:** `ghcr.io/thezigpc/crowdsays:0.1.0`.
+- **Image:** `ghcr.io/thezigpc/crowdsays:0.1.1`.
 
 ## The game
 
@@ -48,7 +48,7 @@ warning.
 | routes | player `/`, table `/join/{code}?as=table`, host `/`, admin `/admin` |
 | events | `room_created`, `room_closed`, `players_changed`, `round_started`, `round_ended`, `winner`, `game_over` |
 | commands | `create_room`, `start`, `next_round`, `end`, `host_link`, `cohost_link`, `remove_cohost` |
-| results | `bg.reportResults` with teams as the players (`game_result` is sent by the SDK) |
+| results | `bg.reportResults` with teams as the players, `player.team: true` (SDK 0.16.0); `game_result` is sent by the SDK |
 
 ## Events
 
@@ -59,7 +59,7 @@ warning.
 | `round_ended` | `Room.ts:865` (`finishRound`); a skipped round at `Room.ts:917` | `{ round, prompt, winner, points, scores: [{ team, score }], skipped? }` |
 | `winner` | `Room.ts:935` (`finishGame`), only when someone scored | `{ name, score, tie }` (tied teams joined with " & ") |
 | `game_over` | `Room.ts:936` | `{ winners: [team names], scores, rounds }` |
-| results | `Room.ts:943` | `results: [{ player: { name: team }, place, score }]`; teams with players or points; ties share a place |
+| results | `Room.ts:943` | `results: [{ player: { name: team, team: true }, place, score }]`; teams with players or points; ties share a place |
 
 ## Commands
 
@@ -112,17 +112,22 @@ The kit's `rooms.overviews()`:
 - `<OnScreenKeyboard />` is mounted once in `client/src/main.tsx`. The game is one app, so that
   covers every page: join, player, host, "board on this screen" and admin.
 - Every text field is a real `<input>` with `maxLength`, inside a `<form onSubmit>`, so Enter
-  submits. The admin's idle-minutes field is `type="number"` with `inputMode="numeric"`, which
-  gets the number pad.
-- **Covered:** the error toast was fixed to the bottom, under the keyboard. On keyboard screens
-  it shows at the top instead (`useOnScreenKeyboard`). Nothing else is fixed to the bottom.
+  submits. The admin's idle-minutes field is `type="text" inputMode="numeric"` (number pad; kit
+  0.10.4 advises against `type="number"`). The room code has `autoCapitalize="none"` (it
+  uppercases itself).
+- Dropdowns (the host's settings, moving a player) open the kit's big-button list on keyboard
+  screens (kit 0.10.6). There is no global `white-space: nowrap` on buttons to leak into it.
+- **Covered:** the error toast is the only thing fixed to the bottom. It sits above the open
+  keyboard with `var(--bargames-keyboard, 0px)` (kit 0.10.2).
 - **Big screens:** at 2400 px wide and up (a 4K kiosk) the phone pages are drawn at twice the
   size. The TV view sizes itself in vh and is unaffected.
 - **Tested** on the mock box with `?bg_keyboard=1` at 1080p and 4K, all typed on the keyboard
   with real pointer presses:
   - the room code and a name, then Enter to join;
   - a rude answer: refused, and the message shows above the keyboard;
-  - backspace, then a real answer, then Enter to send it.
+  - backspace, then a real answer, then Enter to send it;
+  - host (0.1.1): the Teams dropdown opens the kit's list and choosing "3" makes 3 teams; on the
+    grouping screen the rename field (autoFocus) opens the keyboard, and Enter saves the label.
 
   At phone width without the flag, focusing a field shows no keyboard.
 

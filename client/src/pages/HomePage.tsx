@@ -149,7 +149,7 @@ export function HomePage() {
               )
             }
             placeholder="ABCD"
-            autoCapitalize="characters"
+            autoCapitalize="none"
             autoComplete="off"
             maxLength={4}
             className="code-input"

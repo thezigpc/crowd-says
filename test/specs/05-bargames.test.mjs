@@ -169,8 +169,8 @@ describe("on a box", () => {
     for (let i = 0; i < 40 && !core.results.some((x) => x.roomCode === code); i++) await sleep(25);
     const result = core.results.find((x) => x.roomCode === code);
     assert.deepEqual(result.results, [
-      { player: { name: "Lions" }, place: 1, score: 2 },
-      { player: { name: "Blue Team" }, place: 2, score: 0 },
+      { player: { name: "Lions", team: true }, place: 1, score: 2 },
+      { player: { name: "Blue Team", team: true }, place: 2, score: 0 },
     ]);
     assert.equal((await command("next_round", code)).ok, false, "game over");
     assert.equal((await command("start", code)).ok, true, "a new game");

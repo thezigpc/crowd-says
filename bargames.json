@@ -1,10 +1,10 @@
 {
   "id": "crowdsays",
   "name": "Crowd Says",
-  "version": "0.1.0",
-  "image": "ghcr.io/thezigpc/crowdsays:0.1.0",
+  "version": "0.1.1",
+  "image": "ghcr.io/thezigpc/crowdsays:0.1.1",
   "port": 3013,
-  "sdk": { "version": "0.15.0", "level": 3 },
+  "sdk": { "version": "0.16.0", "level": 3 },
   "routing": { "basePath": true },
   "routes": {
     "player": "/",

@@ -345,7 +345,7 @@ function SettingsPanel({ token, settings, run }: { token: string; settings: Admi
       <h2>Settings</h2>
       <label>
         Close rooms after this many idle minutes
-        <input type="number" inputMode="numeric" min={5} max={1440} maxLength={4} value={idle} onChange={(e) => setIdle(e.target.value)} />
+        <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={4} value={idle} onChange={(e) => setIdle(e.target.value.replace(/[^0-9]/g, ""))} />
       </label>
       <button className="btn btn-secondary">Save</button>
     </form>

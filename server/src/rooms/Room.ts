@@ -943,7 +943,8 @@ export class Room implements KitRoom {
       void bg.reportResults({
         roomCode: this.code,
         results: ranked.map(({ t }) => ({
-          player: { name: t.name },
+          // SDK 0.16.0: the "player" is a team, so boards keep team seasons apart.
+          player: { name: t.name, team: true },
           place: 1 + ranked.filter((o) => o.t.score > t.score).length,
           score: t.score,
         })),

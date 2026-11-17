@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useOnScreenKeyboard, useRoomConnection } from "@bargames/gamekit/client";
+import { useRoomConnection } from "@bargames/gamekit/client";
 import { isOnBox, markSharedScreen, tableMode, type TableModeController } from "@bargames/sdk/client";
 import type { RoomView } from "@crowdsays/shared";
 import { call, socket } from "../socket";
@@ -51,8 +51,6 @@ export function RoomPage() {
       }),
   });
   const { act, toast, setToast } = useAction();
-  // On a touchscreen with the on-screen keyboard, a toast at the bottom would sit under it.
-  const keyboardScreen = useOnScreenKeyboard();
   // One-off messages: "Staff took over hosting…", "You're not a co-host any more."
   useEffect(() => {
     const onNotice = (n: { message: string }) => setToast(n.message);
@@ -161,7 +159,7 @@ export function RoomPage() {
       {role === "player" && <PlayerView view={view} skew={skew} act={act} setToast={setToast} />}
       {role === "table" && <TableView view={view} skew={skew} />}
       {toast && (
-        <div className={`toast ${keyboardScreen ? "toast-top" : ""}`} role="alert" onClick={() => setToast(null)}>
+        <div className="toast" role="alert" onClick={() => setToast(null)}>
           {toast}
         </div>
       )}
