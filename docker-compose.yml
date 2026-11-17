@@ -1,0 +1,32 @@
+# Standalone, on any Docker host: docker compose up -d --build
+# The app publishes to 127.0.0.1 only; put your own reverse proxy or tunnel in front of it.
+# (On a Bar Games box none of this is used: the box runs the published image itself.)
+services:
+  app:
+    build: .
+    container_name: crowdsays-app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${HOST_PORT:-3013}:3013"
+    environment:
+      PORT: "3013"
+      DATA_DIR: /data
+      GAME_NAME: "${GAME_NAME:-Crowd Says}"
+      # Leave unset to use the /admin first-run setup screen.
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-}"
+      LOG_LEVEL: "${LOG_LEVEL:-info}"
+    volumes:
+      # Admin password, settings, prompt packs and saved answers survive rebuilds.
+      # The image runs as uid 1000: `sudo chown -R 1000:1000 ./data` if root created it.
+      - ./data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3013/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
